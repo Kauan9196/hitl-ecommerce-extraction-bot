@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Integration Hub</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #121214;
+            --bg-card: #202024;
+            --primary: #4a2278;
+            --primary-hover: #5d2b96;
+            --success: #04d361;
+            --danger: #f75a68;
+            --text-main: #e1e1e6;
+            --text-muted: #a8a8b3;
+            --border: #323238;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(32, 32, 36, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .stat-badge.pending { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+        .stat-badge.posted { background: rgba(4, 211, 97, 0.1); color: var(--success); }
+        .stat-badge.ignored { background: rgba(168, 168, 179, 0.1); color: var(--text-muted); }
+
+        .settings-bar {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--border);
+            color: var(--text-main);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            filter: brightness(1.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        button.primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+
+        .card:hover {
+            border-color: #4a4a52;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-dark);
+        }
+
+        .card-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Estilos do Gerador de Imagem */
+        .custom-thumb {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(135deg, #007bff, #00d4ff);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-thumb-badge {
+            background: white;
+            color: #007bff;
+            font-weight: 800;
+            font-size: 1.15rem;
+            padding: 0.35rem 1.5rem;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            z-index: 2;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .custom-thumb-img-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1; /* Força a imagem a ser um quadrado 1:1 */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .custom-thumb-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Corta a imagem (crop) ao invés de achatar */
+            object-position: center;
+        }
+
+        .custom-thumb-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 30, 80, 0.95) 0%, rgba(0, 30, 80, 0) 100%);
+            padding: 3.5rem 1rem 0.5rem 1rem;
+            text-align: center;
+            color: white;
+        }
+
+        .custom-thumb-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            line-height: 1.1;
+        }
+
+        .custom-thumb-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .custom-thumb-title[contenteditable="true"],
+        .custom-thumb-subtitle[contenteditable="true"] {
+            outline: none;
+            border: 1px dashed transparent;
+            transition: 0.2s;
+        }
+
+        .custom-thumb-title[contenteditable="true"]:hover,
+        .custom-thumb-subtitle[contenteditable="true"]:hover,
+        .custom-thumb-title[contenteditable="true"]:focus,
+        .custom-thumb-subtitle[contenteditable="true"]:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            cursor: text;
+        }
+
+        .editable-title {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.5rem;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .editable-title:focus {
+            background: var(--bg-dark);
+            border-color: var(--primary);
+        }
+
+        .card-details {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            font-size: 0.875rem;
+        }
+
+        .detail-tag {
+            background: rgba(234, 179, 8, 0.1);
+            color: #eab308;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .detail-tag.coupon {
+            background: rgba(74, 34, 120, 0.2);
+            color: #a879e6;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 0.75rem;
+        }
+
+        .btn-post {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-post:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-ignore {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+        }
+
+        .card.posted {
+            opacity: 0.6;
+            filter: grayscale(0.6);
+            pointer-events: none;
+            position: relative;
+        }
+
+        .posted-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(4, 211, 97, 0.95);
+            color: white;
+            font-weight: 800;
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .card.processed {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>✈️ Offer Integration Hub</h1>
+        <div class="stats">
+            <div class="stat-badge pending" id="stat-pending">0 pending</div>
+            <div class="stat-badge posted" id="stat-posted">0 posted</div>
+            <div class="stat-badge ignored" id="stat-ignored">0 ignored</div>
+        </div>
+    </header>
+
+    <div class="settings-bar">
+        <div class="input-group">
+            <label>Upload Extracted CSV</label>
+            <input type="file" id="csv-file" accept=".csv" style="padding: 0.3rem;">
+        </div>
+        
+        <div class="input-group">
+            <label>Gemini API Key</label>
+            <input type="password" id="gemini-key" placeholder="AIzaSy..." style="width: 250px;">
+        </div>
+
+        <div class="input-group" style="flex: 1;">
+            <label>API Endpoint (Webhook Target)</label>
+            <input type="url" id="api-endpoint" placeholder="https://webhook.site/your-id" value="https://api.your-platform.com/v1/offer" style="width: 100%;">
+        </div>
+
+        <button id="btn-improve-titles" disabled>✨ Optimize Titles w/ Gemini</button>
+    </div>
+
+    <div class="grid" id="cards-container">
+        <!-- Cards injected here -->
+    </div>
+
+    <script>
+        let offers = [];
+        let stats = { pending: 0, posted: 0, ignored: 0 };
+
+        const fileInput = document.getElementById('csv-file');
+        const cardsContainer = document.getElementById('cards-container');
+        const btnImprove = document.getElementById('btn-improve-titles');
+        const apiEndpointInput = document.getElementById('api-endpoint');
+
+        const removeAccents = (str) => {
+            if (!str) return '';
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        };
+
+        const extrairPrecoComplexo = (str) => {
+            if (!str || str === '—' || str === '-') return { novo: null, antigo: null };
+            
+            const matchPor = str.match(/Por:\s*(?:R\$|BRL)\s*([\d.,]+)/i);
+            if (matchPor) {
+                return { novo: parseFloat(matchPor[1].replace(/\./g, '').replace(',', '.')), antigo: null };
+            }
+            
+            const matches = [...str.matchAll(/(?:R\$|BRL)\s*([\d.,]+)/g)];
+            if (matches.length === 1) {
+                return { novo: parseFloat(matches[0][1].replace(/\./g, '').replace(',', '.')), antigo: null };
+            } else if (matches.length >= 2) {
+                const valores = matches.map(m => parseFloat(m[1].replace(/\./g, '').replace(',', '.')));
+                const val1 = valores[valores.length - 2];
+                const val2 = valores[valores.length - 1];
+                return { novo: Math.min(val1, val2), antigo: Math.max(val1, val2) };
+            }
+            return { novo: null, antigo: null };
+        };
+
+        const extrairPrecoAntigoFallback = (str) => {
+            if (!str || str === '—' || str === '-') return 0;
+            const match = str.match(/(?:R\$|BRL)\s*([\d.,]+)/i);
+            return match ? parseFloat(match[1].replace(/\./g, '').replace(',', '.')) : 0;
+        };
+
+        const atualizarStats = () => {
+            document.getElementById('stat-pending').innerText = `${stats.pending} pending`;
+            document.getElementById('stat-posted').innerText = `${stats.posted} posted`;
+            document.getElementById('stat-ignored').innerText = `${stats.ignored} ignored`;
+        };
+
+        const renderizarCards = () => {
+            cardsContainer.innerHTML = '';
+            offers.forEach((offer, index) => {
+                // Se foi ignorado, esconde da tela
+                if (offer.status === 'ignored') return;
+
+                const precosStr = extrairPrecoComplexo(offer['Final Price / Savings']);
+                const precoNovo = precosStr.novo;
+                let precoAntigo = precosStr.antigo;
+                
+                if (!precoAntigo) {
+                    precoAntigo = extrairPrecoAntigoFallback(offer['Old Price']);
+                }
+                
+                const dataViagem = offer['Travel Date'] !== '—' && offer['Travel Date'] !== '-' ? offer['Travel Date'] : null;
+                const url = offer['URL'] || '';
+                const textoFix = offer['Full Text'] || '';
+                
+                let instrucoes = '';
+                let loja = 'AGENCY';
+
+                if (url.includes('latamairlines.com')) {
+                    loja = 'LATAM';
+                    instrucoes = '✈️ LATAM Airlines Flight.';
+                    if (textoFix.toLowerCase().includes('taxa') || textoFix.toLowerCase().includes('tax')) {
+                        instrucoes += '\n✅ Taxes already included in the advertised price.';
+                    }
+                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
+                } else if (url.includes('voegol.com.br')) {
+                    loja = 'GOL';
+                    instrucoes = '✈️ GOL Airlines Flight.';
+                    if (textoFix.toLowerCase().includes('ida e volta') || textoFix.toLowerCase().includes('round')) instrucoes += '\n🔁 Round Trip Flight.';
+                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
+                } else {
+                    loja = 'DECOLAR';
+                    instrucoes = '⚠️ The advertised price is per person. By default, the OTA calculates this promotional price for trips in pairs.';
+                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
+                }
+
+                const card = document.createElement('div');
+                card.className = offer.status === 'posted' ? 'card posted' : 'card';
+                
+                // Lógica da Imagem Dinâmica com Persistência
+                let destTitle = offer.destTitle || offer['Offer Title'];
+                let destSubtitle = offer.destSubtitle || '';
+                
+                let badgeText = offer['Action Type'] || 'Travel Offer';
+                if (loja === 'GOL' || loja === 'LATAM' || textoFix.toLowerCase().includes('trecho')) badgeText = 'Flight Ticket';
+
+                if (!offer.destTitle) {
+                    const diasMatch = textoFix.match(/(\d+)\s*Dias?\s*\/?\s*(\d+)\s*Noites?/i) || textoFix.match(/(\d+)\s*Days?\s*\/?\s*(\d+)\s*Nights?/i);
+                    if (diasMatch) {
+                        const days = diasMatch[1] === '1' ? '1 Day' : `${diasMatch[1]} Days`;
+                        const nights = diasMatch[2] === '1' ? '1 Night' : `${diasMatch[2]} Nights`;
+                        destSubtitle = `${days} • ${nights}`;
+                    } else if (loja === 'GOL' || loja === 'LATAM' || textoFix.toLowerCase().includes('voo') || textoFix.toLowerCase().includes('trecho')) {
+                        if (textoFix.toLowerCase().includes('trecho 2')) {
+                            destSubtitle = 'Multi-Destination';
+                        } else {
+                            destSubtitle = (instrucoes.includes('Round Trip') || textoFix.toLowerCase().includes('volta')) ? 'Round Trip' : 'Direct Flight';
+                        }
+                    } else if (textoFix.toLowerCase().includes('noite')) {
+                        const nightMatch = textoFix.match(/(\d+)\s*noites?/i);
+                        if (nightMatch) {
+                            destSubtitle = nightMatch[1] === '1' ? '1 Night' : `${nightMatch[1]} Nights`;
+                        } else {
+                            destSubtitle = 'Accommodation';
+                        }
+                    }
+
+                    const extractDest = (text) => {
+                        const match = text.match(/(?:Pacote para|Package to|Voo para|Voo a|Flight to|Hospedagem em|Ingressos para) ([a-zA-ZÀ-ÿ\s]+)/i);
+                        if (match) return match[1].split(' Hotel')[0].split(' Aéreo')[0].split(' Flight')[0].split(' IDA')[0].split(' 9.')[0].split(' 8.')[0].trim();
+                        
+                        const matchTrecho = text.match(/Paradas\s+([a-zA-ZÀ-ÿ\s\+]+)\s+TRECHO/i);
+                        if (matchTrecho) return matchTrecho[1].trim();
+
+                        return text;
+                    };
+
+                    if (destTitle === 'Oferta' || destTitle === 'Offer' || destTitle === '') {
+                        destTitle = extractDest(textoFix);
+                    } else {
+                        destTitle = extractDest(destTitle);
+                    }
+                    
+                    if (destTitle === 'Oferta' || destTitle === 'Offer') {
+                        destTitle = 'Special Offer';
+                    }
+                    
+                    destTitle = removeAccents(destTitle);
+
+                    if (destTitle.length > 25) destTitle = destTitle.substring(0, 25) + '...';
+                    
+                    offer.destTitle = destTitle;
+                    offer.destSubtitle = destSubtitle;
+                } else {
+                    destTitle = offer.destTitle;
+                    destSubtitle = offer.destSubtitle;
+                }
+
+                if (!offer.optimized) {
+                    offer['Offer Title'] = `${badgeText}: ${destTitle}${destSubtitle ? ' (' + destSubtitle + ')' : ''}`;
+                }
+
+                let overlayHtml = offer.status === 'posted' ? '<div class="posted-overlay">✅ POSTED</div>' : '';
+                
+                let imgUrl = offer['Image'] || '';
+                let isDecolarLogo = imgUrl && loja === 'DECOLAR' && badgeText === 'Flight Ticket';
+                
+                if (!imgUrl || isDecolarLogo || imgUrl.includes('placeholder')) {
+                    if (badgeText === 'Flight Ticket') {
+                        imgUrl = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=400&q=80';
+                    } else if (badgeText === 'Hotel') {
+                        imgUrl = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80';
+                    } else {
+                        imgUrl = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=400&q=80';
+                    }
+                }
+
+                let detailsHtml = '';
+                if (precoAntigo > 0) {
+                    detailsHtml = `
+                        <span class="detail-tag">From: BRL <span contenteditable="true" id="oldprice-${index}" style="outline: none;">${precoAntigo}</span></span>
+                        <span class="detail-tag" style="background: rgba(4, 211, 97, 0.1); color: #04d361;">To: BRL <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
+                    `;
+                } else {
+                    detailsHtml = `
+                        <span class="detail-tag" style="background: rgba(4, 211, 97, 0.1); color: #04d361;">Starting at: BRL <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${overlayHtml}
+                    <div class="card-header" style="justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span class="card-badge">${loja}</span>
+                        <a href="${url}" target="_blank" style="color:#a879e6; font-size:0.875rem; text-decoration:none; font-weight:600;">🔗 View Offer</a>
+                    </div>
+
+                    <div class="custom-thumb" id="thumb-${index}">
+                        <div class="custom-thumb-badge">${badgeText}</div>
+                        <div class="custom-thumb-img-wrapper">
+                            <img src="${imgUrl}" class="custom-thumb-img" crossorigin="anonymous">
+                            <div class="custom-thumb-overlay">
+                                <div class="custom-thumb-title" contenteditable="true" onblur="offers[${index}].destTitle = this.innerText">${destTitle}</div>
+                                <div class="custom-thumb-subtitle" contenteditable="true" onblur="offers[${index}].destSubtitle = this.innerText">${destSubtitle}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <textarea class="editable-title" id="title-${index}" style="margin-top: 0.5rem;">${offer['Offer Title']}</textarea>
+                    
+                    <div class="card-details">
+                        ${detailsHtml}
+                        <span class="detail-tag coupon">Coupon: <span contenteditable="true" id="coupon-${index}" style="outline: none;">${offer['Code'] || 'None'}</span></span>
+                    </div>
+
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        <strong>Instructions:</strong> <span contenteditable="true" id="inst-${index}" style="outline: none;">${instrucoes || 'None'}</span>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-post" onclick="publishToAPI(${index}, '${url}')">Publish via API</button>
+                        <button class="btn-ignore" onclick="ignoreOffer(${index})">Ignore</button>
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+            atualizarStats();
+        };
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    offers = results.data.map(d => ({ ...d, status: 'pending', optimized: false }));
+                    stats.pending = offers.length;
+                    stats.posted = 0;
+                    stats.ignored = 0;
+                    btnImprove.disabled = false;
+                    renderizarCards();
+                }
+            });
+        });
+
+        window.ignoreOffer = (index) => {
+            offers[index].status = 'ignored';
+            stats.pending--;
+            stats.ignored++;
+            renderizarCards();
+        };
+
+        window.publishToAPI = async (index, url) => {
+            const apiEndpoint = apiEndpointInput.value;
+            if (!apiEndpoint) {
+                alert("Please fill in the API Endpoint (Webhook Target) at the top.");
+                return;
+            }
+
+            const precoNovoStr = document.getElementById(`newprice-${index}`).innerText.trim();
+            const oldPriceEl = document.getElementById(`oldprice-${index}`);
+            const precoAntigoStr = oldPriceEl ? oldPriceEl.innerText.trim() : '0';
+            
+            const precoNovo = parseFloat(precoNovoStr.replace(',', '.')) || 0;
+            let precoAntigo = parseFloat(precoAntigoStr.replace(',', '.')) || 0;
+            
+            if (precoAntigo === 0) {
+                precoAntigo = 0.01; // Flag para o back-end saber que é "a partir de"
+            }
+
+            let cupom = document.getElementById(`coupon-${index}`).innerText.trim();
+            if (cupom === 'None') cupom = '';
+            
+            const titleInput = document.getElementById(`title-${index}`).value;
+            let instrucoes = document.getElementById(`inst-${index}`).innerText.trim();
+            if (instrucoes === 'None') instrucoes = '';
+
+            const payload = {
+                title: titleInput,
+                url: url,
+                price: precoNovo,
+                original_price: precoAntigo,
+                coupon: cupom,
+                instructions: instrucoes,
+                image_url: offers[index]['Image'] || "",
+                source: "TRAVEL_SCRAPER"
+            };
+
+            try {
+                const res = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: apiEndpoint.includes("webhook.site") ? 'no-cors' : 'cors',
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok || res.type === 'opaque') {
+                    offers[index].status = 'posted';
+                    stats.pending--;
+                    stats.posted++;
+                    renderizarCards();
+                } else {
+                    alert("Error returned by target API.");
+                }
+            } catch(e) {
+                alert("Network error. Check Webhook URL or Endpoint.");
+                console.error(e);
+            }
+        };
+
+        btnImprove.addEventListener('click', async () => {
+            const apiKey = document.getElementById('gemini-key').value;
+            if (!apiKey) return alert("Please enter your Gemini API Key!");
+
+            const pendingIndices = offers.map((o, i) => o.status === 'pending' ? i : -1).filter(i => i !== -1);
+            if (pendingIndices.length === 0) return;
+
+            btnImprove.innerText = "⏳ Optimizing...";
+            btnImprove.disabled = true;
+
+            const itemsParaPrompt = pendingIndices.map(i => {
+                const o = offers[i];
+                return `ID ${i}: Original title: "${o['Offer Title']}". Details: "${o['Full Text']}"`;
+            }).join('\n');
+
+            const promptText = `You are a marketing expert. Rewrite the travel offer titles below to make them attractive and short (max 80 characters). The title MUST contain the destination name. Do not use emojis or overly clickbaity hooks. TRANSLATE EVERYTHING TO ENGLISH and remove accents from city names.
+Return ONLY a valid JSON in the format: [{"id": number, "new_title": "title"}]
+Offers:\n${itemsParaPrompt}`;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }],
+                        generationConfig: { temperature: 0.7 }
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    let responseText = data.candidates[0].content.parts[0].text;
+                    responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    
+                    try {
+                        const arr = JSON.parse(responseText);
+                        arr.forEach(item => {
+                            const index = item.id;
+                            if (offers[index]) {
+                                offers[index]['Offer Title'] = item.new_title;
+                                offers[index].optimized = true;
+                            }
+                        });
+                        renderizarCards();
+                    } catch(e) {
+                        alert("Gemini did not return a valid JSON.");
+                    }
+                }
+            } catch(e) {
+                alert("Error connecting to Gemini API.");
+            }
+
+            btnImprove.innerText = "✨ Optimize Titles w/ Gemini";
+            btnImprove.disabled = false;
+        });
+    </script>
+</body>
+</html>
