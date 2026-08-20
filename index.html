@@ -180,92 +180,98 @@
             color: var(--text-muted);
         }
 
-        /* Estilos do Gerador de Imagem */
-        .custom-thumb {
+        /* Estilos do Gerador de Imagem White-Label */
+        .wl-preview-box {
             position: relative;
             width: 100%;
-            background: linear-gradient(135deg, #007bff, #00d4ff);
-            border-radius: 12px;
-            padding: 1.25rem;
+            background: linear-gradient(145deg, #1e3c72, #2a5298);
+            border-radius: 16px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
             overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-
-        .custom-thumb-badge {
-            background: white;
-            color: #007bff;
-            font-weight: 800;
-            font-size: 1.15rem;
-            padding: 0.35rem 1.5rem;
-            border-radius: 999px;
-            border: 2px solid transparent;
-            z-index: 2;
             margin-bottom: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .custom-thumb-img-wrapper {
+        .wl-preview-badge {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e3c72;
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 0.4rem 1.8rem;
+            border-radius: 8px;
+            z-index: 2;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wl-image-frame {
             position: relative;
             width: 100%;
-            aspect-ratio: 1; /* Força a imagem a ser um quadrado 1:1 */
-            border-radius: 8px;
+            aspect-ratio: 1;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
 
-        .custom-thumb-img {
+        .wl-image-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Corta a imagem (crop) ao invés de achatar */
+            object-fit: cover;
             object-position: center;
         }
 
-        .custom-thumb-overlay {
+        .wl-text-gradient-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(to top, rgba(0, 30, 80, 0.95) 0%, rgba(0, 30, 80, 0) 100%);
-            padding: 3.5rem 1rem 0.5rem 1rem;
+            background: linear-gradient(0deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0) 100%);
+            padding: 4rem 1.25rem 1rem 1.25rem;
             text-align: center;
             color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
-        .custom-thumb-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.2rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            line-height: 1.1;
+        .wl-main-title {
+            font-size: 2.1rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            line-height: 1.05;
+            letter-spacing: -0.5px;
         }
 
-        .custom-thumb-subtitle {
-            font-size: 1rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        .wl-sub-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            color: #e2e8f0;
         }
 
-        .custom-thumb-title[contenteditable="true"],
-        .custom-thumb-subtitle[contenteditable="true"] {
+        .wl-main-title[contenteditable="true"],
+        .wl-sub-title[contenteditable="true"] {
             outline: none;
             border: 1px dashed transparent;
             transition: 0.2s;
         }
 
-        .custom-thumb-title[contenteditable="true"]:hover,
-        .custom-thumb-subtitle[contenteditable="true"]:hover,
-        .custom-thumb-title[contenteditable="true"]:focus,
-        .custom-thumb-subtitle[contenteditable="true"]:focus {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.5);
-            border-radius: 4px;
+        .wl-main-title[contenteditable="true"]:hover,
+        .wl-sub-title[contenteditable="true"]:hover,
+        .wl-main-title[contenteditable="true"]:focus,
+        .wl-sub-title[contenteditable="true"]:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
             cursor: text;
         }
 
@@ -582,13 +588,13 @@
                         <a href="${url}" target="_blank" style="color:#a879e6; font-size:0.875rem; text-decoration:none; font-weight:600;">🔗 View Offer</a>
                     </div>
 
-                    <div class="custom-thumb" id="thumb-${index}">
-                        <div class="custom-thumb-badge">${badgeText}</div>
-                        <div class="custom-thumb-img-wrapper">
-                            <img src="${imgUrl}" class="custom-thumb-img" crossorigin="anonymous">
-                            <div class="custom-thumb-overlay">
-                                <div class="custom-thumb-title" contenteditable="true" onblur="offers[${index}].destTitle = this.innerText">${destTitle}</div>
-                                <div class="custom-thumb-subtitle" contenteditable="true" onblur="offers[${index}].destSubtitle = this.innerText">${destSubtitle}</div>
+                    <div class="wl-preview-box" id="thumb-${index}">
+                        <div class="wl-preview-badge">${badgeText}</div>
+                        <div class="wl-image-frame">
+                            <img src="${imgUrl}" class="wl-image-layer" crossorigin="anonymous">
+                            <div class="wl-text-gradient-overlay">
+                                <div class="wl-main-title" contenteditable="true" onblur="offers[${index}].destTitle = this.innerText">${destTitle}</div>
+                                <div class="wl-sub-title" contenteditable="true" onblur="offers[${index}].destSubtitle = this.innerText">${destSubtitle}</div>
                             </div>
                         </div>
                     </div>
@@ -665,14 +671,14 @@
             if (instrucoes === 'None') instrucoes = '';
 
             const payload = {
-                title: titleInput,
-                url: url,
-                price: precoNovo,
-                original_price: precoAntigo,
-                coupon: cupom,
-                instructions: instrucoes,
-                image_url: offers[index]['Image'] || "",
-                source: "TRAVEL_SCRAPER"
+                offer_headline: titleInput,
+                destination_url: url,
+                current_amount: precoNovo,
+                previous_amount: precoAntigo,
+                promo_code: cupom,
+                offer_details: instrucoes,
+                thumbnail_url: offers[index]['Image'] || "",
+                platform_origin: "EXTERNAL_SCRAPER_API"
             };
 
             try {
