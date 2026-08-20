@@ -10,22 +10,22 @@
 
     <style>
         :root {
-            --bg-dark: #121214;
-            --bg-card: #202024;
-            --primary: #4a2278;
-            --primary-hover: #5d2b96;
-            --success: #04d361;
-            --danger: #f75a68;
-            --text-main: #e1e1e6;
-            --text-muted: #a8a8b3;
-            --border: #323238;
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
         }
 
         body {
@@ -35,8 +35,7 @@
         }
 
         header {
-            background: rgba(32, 32, 36, 0.8);
-            backdrop-filter: blur(8px);
+            background: #ffffff;
             padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -45,12 +44,13 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         h1 {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #fff;
+            color: #0f172a;
         }
 
         .stats {
@@ -60,20 +60,21 @@
 
         .stat-badge {
             padding: 0.5rem 1rem;
-            border-radius: 999px;
+            border-radius: 6px;
             font-size: 0.875rem;
             font-weight: 600;
+            border: 1px solid var(--border);
         }
 
-        .stat-badge.pending { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-        .stat-badge.posted { background: rgba(4, 211, 97, 0.1); color: var(--success); }
-        .stat-badge.ignored { background: rgba(168, 168, 179, 0.1); color: var(--text-muted); }
+        .stat-badge.pending { background: #fef9c3; color: #a16207; border-color: #fde047; }
+        .stat-badge.posted { background: #d1fae5; color: #047857; border-color: #a7f3d0; }
+        .stat-badge.ignored { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
 
         .settings-bar {
-            background: var(--bg-card);
+            background: #ffffff;
             padding: 1rem 2rem;
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: flex-end;
             flex-wrap: wrap;
             border-bottom: 1px solid var(--border);
@@ -82,35 +83,39 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.35rem;
         }
 
         .input-group label {
             font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         input {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            padding: 0.6rem 1rem;
             border-radius: 6px;
             outline: none;
             transition: 0.2s;
+            font-weight: 500;
         }
 
         input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: #ffffff;
         }
 
         button {
-            background: var(--border);
-            color: var(--text-main);
-            border: none;
-            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 0.6rem 1rem;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -118,7 +123,7 @@
         }
 
         button:hover:not(:disabled) {
-            filter: brightness(1.2);
+            background: #e2e8f0;
         }
 
         button:disabled {
@@ -129,6 +134,7 @@
         button.primary {
             background: var(--primary);
             color: white;
+            border: none;
         }
         
         button.primary:hover:not(:disabled) {
@@ -137,7 +143,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 1.5rem;
             padding: 2rem;
         }
@@ -150,12 +156,14 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            transition: transform 0.2s, opacity 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .card:hover {
-            border-color: #4a4a52;
+            border-color: #cbd5e1;
             transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
@@ -164,48 +172,39 @@
             gap: 1rem;
         }
 
-        .card-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: var(--bg-dark);
-        }
-
         .card-badge {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.25rem 0.5rem;
+            background: #f1f5f9;
+            padding: 0.25rem 0.75rem;
             border-radius: 4px;
             font-size: 0.75rem;
-            color: var(--text-muted);
+            color: #475569;
+            font-weight: 700;
+            border: 1px solid #e2e8f0;
         }
 
         /* Estilos do Gerador de Imagem White-Label */
         .wl-preview-box {
             position: relative;
             width: 100%;
-            background: linear-gradient(145deg, #1e3c72, #2a5298);
-            border-radius: 16px;
-            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-            overflow: hidden;
-            margin-bottom: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 0.5rem;
         }
 
         .wl-preview-badge {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1e3c72;
-            font-weight: 800;
-            font-size: 1.1rem;
-            padding: 0.4rem 1.8rem;
-            border-radius: 8px;
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 6px;
             z-index: 2;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -213,10 +212,10 @@
         .wl-image-frame {
             position: relative;
             width: 100%;
-            aspect-ratio: 1;
-            border-radius: 12px;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            border: 1px solid #e2e8f0;
         }
 
         .wl-image-layer {
@@ -234,28 +233,27 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(0deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0) 100%);
-            padding: 4rem 1.25rem 1rem 1.25rem;
-            text-align: center;
-            color: white;
+            background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 40%, rgba(255,255,255,0) 100%);
+            padding: 3rem 1rem 1rem 1rem;
+            text-align: left;
+            color: #0f172a;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.15rem;
         }
 
         .wl-main-title {
-            font-size: 2.1rem;
-            font-weight: 900;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-            line-height: 1.05;
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.1;
             letter-spacing: -0.5px;
+            color: #0f172a;
         }
 
         .wl-sub-title {
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-            color: #e2e8f0;
+            color: #475569;
         }
 
         .wl-main-title[contenteditable="true"],
@@ -269,28 +267,30 @@
         .wl-sub-title[contenteditable="true"]:hover,
         .wl-main-title[contenteditable="true"]:focus,
         .wl-sub-title[contenteditable="true"]:focus {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.4);
-            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
+            border-radius: 4px;
             cursor: text;
         }
 
         .editable-title {
             width: 100%;
-            background: transparent;
-            border: 1px solid transparent;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 0.5rem;
-            border-radius: 4px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.75rem;
+            border-radius: 6px;
             resize: vertical;
             min-height: 60px;
         }
 
         .editable-title:focus {
-            background: var(--bg-dark);
+            background: #ffffff;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
         }
 
         .card-details {
@@ -298,18 +298,31 @@
             gap: 0.5rem;
             flex-wrap: wrap;
             font-size: 0.875rem;
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
         }
 
         .detail-tag {
-            background: rgba(234, 179, 8, 0.1);
-            color: #eab308;
+            background: #ffffff;
+            color: #0f172a;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-weight: 600;
         }
         
+        .detail-tag.highlight {
+            background: #ecfdf5;
+            color: #059669;
+            border-color: #a7f3d0;
+        }
+
         .detail-tag.coupon {
-            background: rgba(74, 34, 120, 0.2);
-            color: #a879e6;
+            background: #f3e8ff;
+            color: #7e22ce;
+            border-color: #e9d5ff;
         }
 
         .card-actions {
@@ -321,25 +334,34 @@
         .card-actions button {
             flex: 1;
             padding: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
 
         .btn-post {
-            background: #2563eb;
+            background: #0f172a;
             color: white;
+            border: none;
         }
 
         .btn-post:hover {
-            background: #1d4ed8;
+            background: #334155;
         }
 
         .btn-ignore {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+        
+        .btn-ignore:hover {
+            background: #f1f5f9;
         }
 
         .card.posted {
-            opacity: 0.6;
-            filter: grayscale(0.6);
+            opacity: 0.5;
             pointer-events: none;
             position: relative;
         }
@@ -349,54 +371,50 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(4, 211, 97, 0.95);
+            background: #10b981;
             color: white;
             font-weight: 800;
-            font-size: 1.5rem;
-            padding: 1rem 2rem;
-            border-radius: 8px;
+            font-size: 1.2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             z-index: 10;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .card.processed {
-            opacity: 0.5;
-            pointer-events: none;
-            filter: grayscale(1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>✈️ Offer Integration Hub</h1>
+        <h1>⚡ Deal Intelligence Dashboard</h1>
         <div class="stats">
-            <div class="stat-badge pending" id="stat-pending">0 pending</div>
-            <div class="stat-badge posted" id="stat-posted">0 posted</div>
-            <div class="stat-badge ignored" id="stat-ignored">0 ignored</div>
+            <div class="stat-badge pending" id="stat-pending">0 Pending</div>
+            <div class="stat-badge posted" id="stat-posted">0 Dispatched</div>
+            <div class="stat-badge ignored" id="stat-ignored">0 Dropped</div>
         </div>
     </header>
 
     <div class="settings-bar">
         <div class="input-group">
-            <label>Upload Extracted CSV</label>
-            <input type="file" id="csv-file" accept=".csv" style="padding: 0.3rem;">
+            <label>Upload Extracted Dataset</label>
+            <input type="file" id="csv-file" accept=".csv" style="padding: 0.4rem;">
         </div>
         
         <div class="input-group">
-            <label>Gemini API Key</label>
+            <label>LLM Auth Key (Gemini)</label>
             <input type="password" id="gemini-key" placeholder="AIzaSy..." style="width: 250px;">
         </div>
 
         <div class="input-group" style="flex: 1;">
-            <label>API Endpoint (Webhook Target)</label>
-            <input type="url" id="api-endpoint" placeholder="https://webhook.site/your-id" value="https://api.your-platform.com/v1/offer" style="width: 100%;">
+            <label>Target Database Endpoint</label>
+            <input type="url" id="api-endpoint" placeholder="https://api.your-platform.com/v1/ingest" value="https://webhook.site/your-id" style="width: 100%;">
         </div>
 
-        <button id="btn-improve-titles" disabled>✨ Optimize Titles w/ Gemini</button>
+        <button id="btn-improve-titles" disabled class="primary">✨ AI Copy Normalization</button>
     </div>
 
     <div class="grid" id="cards-container">
@@ -444,9 +462,9 @@
         };
 
         const atualizarStats = () => {
-            document.getElementById('stat-pending').innerText = `${stats.pending} pending`;
-            document.getElementById('stat-posted').innerText = `${stats.posted} posted`;
-            document.getElementById('stat-ignored').innerText = `${stats.ignored} ignored`;
+            document.getElementById('stat-pending').innerText = `${stats.pending} Pending`;
+            document.getElementById('stat-posted').innerText = `${stats.posted} Dispatched`;
+            document.getElementById('stat-ignored').innerText = `${stats.ignored} Dropped`;
         };
 
         const renderizarCards = () => {
@@ -468,25 +486,22 @@
                 const textoFix = offer['Full Text'] || '';
                 
                 let instrucoes = '';
-                let loja = 'AGENCY';
+                let lojaOrigem = 'SOURCE_01'; // Anonimização para White-Label
 
                 if (url.includes('latamairlines.com')) {
-                    loja = 'LATAM';
-                    instrucoes = '✈️ LATAM Airlines Flight.';
+                    lojaOrigem = 'SOURCE_AIRLINE_A';
+                    instrucoes = 'Flight Asset detected.';
                     if (textoFix.toLowerCase().includes('taxa') || textoFix.toLowerCase().includes('tax')) {
-                        instrucoes += '\n✅ Taxes already included in the advertised price.';
+                        instrucoes += '\nIncludes airport taxes.';
                     }
-                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
                 } else if (url.includes('voegol.com.br')) {
-                    loja = 'GOL';
-                    instrucoes = '✈️ GOL Airlines Flight.';
-                    if (textoFix.toLowerCase().includes('ida e volta') || textoFix.toLowerCase().includes('round')) instrucoes += '\n🔁 Round Trip Flight.';
-                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
+                    lojaOrigem = 'SOURCE_AIRLINE_B';
+                    instrucoes = 'Flight Asset detected.';
                 } else {
-                    loja = 'DECOLAR';
-                    instrucoes = '⚠️ The advertised price is per person. By default, the OTA calculates this promotional price for trips in pairs.';
-                    if (dataViagem) instrucoes += `\n📅 Travel Date: ${dataViagem}`;
+                    lojaOrigem = 'DATA_SOURCE_C';
+                    instrucoes = 'Base fare calculation requires min. 2 passengers.';
                 }
+                if (dataViagem) instrucoes += `\nTarget Dates: ${dataViagem}`;
 
                 const card = document.createElement('div');
                 card.className = offer.status === 'posted' ? 'card posted' : 'card';
@@ -495,8 +510,8 @@
                 let destTitle = offer.destTitle || offer['Offer Title'];
                 let destSubtitle = offer.destSubtitle || '';
                 
-                let badgeText = offer['Action Type'] || 'Travel Offer';
-                if (loja === 'GOL' || loja === 'LATAM' || textoFix.toLowerCase().includes('trecho')) badgeText = 'Flight Ticket';
+                let badgeText = offer['Action Type'] || 'Generic Asset';
+                if (lojaOrigem.includes('AIRLINE') || textoFix.toLowerCase().includes('trecho')) badgeText = 'Flight Ticket';
 
                 if (!offer.destTitle) {
                     const diasMatch = textoFix.match(/(\d+)\s*Dias?\s*\/?\s*(\d+)\s*Noites?/i) || textoFix.match(/(\d+)\s*Days?\s*\/?\s*(\d+)\s*Nights?/i);
@@ -504,18 +519,18 @@
                         const days = diasMatch[1] === '1' ? '1 Day' : `${diasMatch[1]} Days`;
                         const nights = diasMatch[2] === '1' ? '1 Night' : `${diasMatch[2]} Nights`;
                         destSubtitle = `${days} • ${nights}`;
-                    } else if (loja === 'GOL' || loja === 'LATAM' || textoFix.toLowerCase().includes('voo') || textoFix.toLowerCase().includes('trecho')) {
+                    } else if (lojaOrigem.includes('AIRLINE') || textoFix.toLowerCase().includes('voo') || textoFix.toLowerCase().includes('trecho')) {
                         if (textoFix.toLowerCase().includes('trecho 2')) {
-                            destSubtitle = 'Multi-Destination';
+                            destSubtitle = 'Multi-Destination Route';
                         } else {
-                            destSubtitle = (instrucoes.includes('Round Trip') || textoFix.toLowerCase().includes('volta')) ? 'Round Trip' : 'Direct Flight';
+                            destSubtitle = (instrucoes.includes('Round Trip') || textoFix.toLowerCase().includes('volta')) ? 'Round-Trip Route' : 'Direct Route';
                         }
                     } else if (textoFix.toLowerCase().includes('noite')) {
                         const nightMatch = textoFix.match(/(\d+)\s*noites?/i);
                         if (nightMatch) {
                             destSubtitle = nightMatch[1] === '1' ? '1 Night' : `${nightMatch[1]} Nights`;
                         } else {
-                            destSubtitle = 'Accommodation';
+                            destSubtitle = 'Accommodation Asset';
                         }
                     }
 
@@ -536,7 +551,7 @@
                     }
                     
                     if (destTitle === 'Oferta' || destTitle === 'Offer') {
-                        destTitle = 'Special Offer';
+                        destTitle = 'Special Asset';
                     }
                     
                     destTitle = removeAccents(destTitle);
@@ -551,18 +566,18 @@
                 }
 
                 if (!offer.optimized) {
-                    offer['Offer Title'] = `${badgeText}: ${destTitle}${destSubtitle ? ' (' + destSubtitle + ')' : ''}`;
+                    offer['Offer Title'] = `[${badgeText}] ${destTitle}${destSubtitle ? ' - ' + destSubtitle : ''}`;
                 }
 
-                let overlayHtml = offer.status === 'posted' ? '<div class="posted-overlay">✅ POSTED</div>' : '';
+                let overlayHtml = offer.status === 'posted' ? '<div class="posted-overlay">PAYLOAD DISPATCHED</div>' : '';
                 
                 let imgUrl = offer['Image'] || '';
-                let isDecolarLogo = imgUrl && loja === 'DECOLAR' && badgeText === 'Flight Ticket';
+                let isDecolarLogo = imgUrl && lojaOrigem === 'DATA_SOURCE_C' && badgeText === 'Flight Ticket';
                 
                 if (!imgUrl || isDecolarLogo || imgUrl.includes('placeholder')) {
                     if (badgeText === 'Flight Ticket') {
                         imgUrl = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=400&q=80';
-                    } else if (badgeText === 'Hotel') {
+                    } else if (badgeText === 'Hotel' || badgeText === 'Accommodation Asset') {
                         imgUrl = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80';
                     } else {
                         imgUrl = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=400&q=80';
@@ -572,20 +587,20 @@
                 let detailsHtml = '';
                 if (precoAntigo > 0) {
                     detailsHtml = `
-                        <span class="detail-tag">From: BRL <span contenteditable="true" id="oldprice-${index}" style="outline: none;">${precoAntigo}</span></span>
-                        <span class="detail-tag" style="background: rgba(4, 211, 97, 0.1); color: #04d361;">To: BRL <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
+                        <span class="detail-tag">Original: $ <span contenteditable="true" id="oldprice-${index}" style="outline: none;">${precoAntigo}</span></span>
+                        <span class="detail-tag highlight">Calculated: $ <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
                     `;
                 } else {
                     detailsHtml = `
-                        <span class="detail-tag" style="background: rgba(4, 211, 97, 0.1); color: #04d361;">Starting at: BRL <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
+                        <span class="detail-tag highlight">Base Input: $ <span contenteditable="true" id="newprice-${index}" style="outline: none;">${precoNovo || ''}</span></span>
                     `;
                 }
 
                 card.innerHTML = `
                     ${overlayHtml}
                     <div class="card-header" style="justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span class="card-badge">${loja}</span>
-                        <a href="${url}" target="_blank" style="color:#a879e6; font-size:0.875rem; text-decoration:none; font-weight:600;">🔗 View Offer</a>
+                        <span class="card-badge">${lojaOrigem}</span>
+                        <a href="${url}" target="_blank" style="color:#2563eb; font-size:0.875rem; text-decoration:none; font-weight:600;">Inspect JSON Link ↗</a>
                     </div>
 
                     <div class="wl-preview-box" id="thumb-${index}">
@@ -603,16 +618,16 @@
                     
                     <div class="card-details">
                         ${detailsHtml}
-                        <span class="detail-tag coupon">Coupon: <span contenteditable="true" id="coupon-${index}" style="outline: none;">${offer['Code'] || 'None'}</span></span>
+                        <span class="detail-tag coupon">Parameter: <span contenteditable="true" id="coupon-${index}" style="outline: none;">${offer['Code'] || 'NULL'}</span></span>
                     </div>
 
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">
-                        <strong>Instructions:</strong> <span contenteditable="true" id="inst-${index}" style="outline: none;">${instrucoes || 'None'}</span>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); background: #f1f5f9; padding: 0.5rem; border-radius: 4px;">
+                        <strong>Metadata:</strong> <span contenteditable="true" id="inst-${index}" style="outline: none;">${instrucoes || 'NULL'}</span>
                     </div>
 
                     <div class="card-actions">
-                        <button class="btn-post" onclick="publishToAPI(${index}, '${url}')">Publish via API</button>
-                        <button class="btn-ignore" onclick="ignoreOffer(${index})">Ignore</button>
+                        <button class="btn-post" onclick="publishToAPI(${index}, '${url}')">DISPATCH PAYLOAD</button>
+                        <button class="btn-ignore" onclick="ignoreOffer(${index})">DROP NODE</button>
                     </div>
                 `;
                 cardsContainer.appendChild(card);
